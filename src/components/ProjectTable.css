@@ -1,0 +1,60 @@
+/* ProjectTable.css */
+
+/* Estilo para la tabla de proyectos */
+.project-table {
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.project-table .header {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.project-table .search-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+}
+
+.project-table .filters {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.project-table .filters button {
+  background-color: transparent;
+  border: none;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.project-table .filters button:hover {
+  text-decoration: underline;
+}
+
+.project-table .table {
+  width: 100%;
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.project-table th,
+.project-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.project-table th {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.project-table td {
+  font-size: 0.875rem;
+  color: #4b5563;
+}

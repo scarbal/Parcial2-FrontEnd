@@ -1,25 +1,44 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';  // Importamos el contexto
+import './Header.css';  // Importamos el archivo CSS
+import SeedButton from './SeedButton';
+
 
 export const Header: React.FC = () => {
+  const { user, login, logout } = useAuth();  // Accedemos al estado del usuario
+
   return (
-    <header className="bg-white shadow p-4 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="font-semibold text-xl">◆ Acme Co.</span>
+    <header className="header">
+      <div className="left-container">
+        <span className="logo">◆ Acme Co.</span>
         <input
           type="text"
           placeholder="Search"
-          className="bg-gray-100 px-3 py-1 rounded"
+          className="search-input"
         />
       </div>
-      <div className="flex items-center gap-4">
-        <Link to="/signup">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">Sign Up</button>
-        </Link>
-        <button className="bg-red-500 text-white px-4 py-2 rounded">New Project</button>
-        <button className="bg-gray-200 px-4 py-2 rounded">Explore</button>
-        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+      <div className="right-container">
+        {!user ? (
+          <>
+          <Link to="/login">
+            <button className="button-primary">Log In</button>
+          </Link>
+          <button className="button-tertiary">Explore</button>
+          <SeedButton />
+          </>
+       
+          
+        ) : (
+          // Si el usuario está logueado, mostramos el botón de "New Project"
+          <>
+            <button className="button-secondary">New Project</button>
+            <button className="button-tertiary" onClick={logout}>Log Out</button>
+            <button className="button-tertiary">Explore</button>
+            <div className="avatar"></div>
+          </>
+        )}
+        
       </div>
     </header>
   );

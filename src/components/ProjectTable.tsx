@@ -1,38 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProjectRow } from './ProjectRow';
+import './ProjectTable.css';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
-const projects = [
-  {
-    type: 'Research paper',
-    description: 'A novel approach to unsupervised learning',
-    tags: ['Machine learning', 'unsupervised learning'],
-    members: 1,
-    stars: 1200,
-    forks: 500,
-    updated: '2 days ago',
-  },
-  {
-    type: 'Open-source project',
-    description: 'An interactive data visualization tool',
-    tags: ['Data visualization', 'open-source'],
-    members: 3,
-    stars: 3000,
-    forks: 800,
-    updated: '1 week ago',
-  },
-  // ...otros proyectos
-];
+interface Project {
+  type: string;
+  description: string;
+  tags: string[];
+  members: string[];
+  stars: number;
+  forks: number;
+  updated: string;
+}
 
 export const ProjectTable: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const querySnapshot = await getDocs(collection(db, 'projects'));
+      const data: Project[] = querySnapshot.docs.map(doc => doc.data() as Project);
+      setProjects(data);
+    };
+
+    fetchProjects();
+  }, []);
+
   return (
-    <div className="bg-white rounded shadow">
-      <div className="p-4 border-b">
-        <input
-          type="text"
-          placeholder="Search public projects"
-          className="w-full p-2 border rounded"
-        />
-        <div className="flex gap-4 mt-4 text-sm">
+    <div className="project-table">
+      <div className="header">
+        <input type="text" placeholder="Search public projects" className="search-input" />
+        <div className="filters">
           <button className="text-blue-600 font-medium">All</button>
           <button>Featured</button>
           <button>Trending</button>
@@ -41,10 +40,10 @@ export const ProjectTable: React.FC = () => {
           <button>Add filter</button>
         </div>
       </div>
-      <table className="w-full text-left">
+      <table className="table">
         <thead>
-          <tr className="border-b">
-            <th className="p-4">Project</th>
+          <tr>
+            <th>Project</th>
             <th>Description</th>
             <th>Tags</th>
             <th>Members</th>
@@ -55,7 +54,11 @@ export const ProjectTable: React.FC = () => {
         </thead>
         <tbody>
           {projects.map((project, idx) => (
-            <ProjectRow key={idx} {...project} />
+            <ProjectRow
+              key={idx}
+              {...project}
+              members={project.members.length} // pasamos cantidad
+            />
           ))}
         </tbody>
       </table>
