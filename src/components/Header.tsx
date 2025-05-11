@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';  // Importamos el contexto
 import './Header.css';  // Importamos el archivo CSS
-import SeedButton from './SeedButton';
 
 
 export const Header: React.FC = () => {
@@ -25,7 +24,6 @@ export const Header: React.FC = () => {
             <button className="button-primary">Log In</button>
           </Link>
           <button className="button-tertiary">Explore</button>
-          <SeedButton />
           </>
        
           

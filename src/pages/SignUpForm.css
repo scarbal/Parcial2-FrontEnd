@@ -15,6 +15,17 @@
   space-y: 1.5rem;
 }
 
+.error-message {
+  color: #d93025;              /* Rojo Google */
+  background-color: #fdecea;   /* Fondo rojo claro */
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
 .back-button {
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
