@@ -9,16 +9,29 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
+.dark .create-project-container {
+  background-color: #1f2937; /* gris oscuro */
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
 .title {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 1.5rem;
 }
 
+.dark .title {
+  color: #f3f4f6; /* texto claro */
+}
+
 .form label {
   display: block;
   margin-top: 1rem;
   font-weight: 500;
+}
+
+.dark .form label {
+  color: #e5e7eb; /* texto claro */
 }
 
 .form input,
@@ -28,6 +41,15 @@
   margin-top: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: white;
+  color: black;
+}
+
+.dark .form input,
+.dark .form textarea {
+  background-color: #374151; /* gris medio oscuro */
+  color: #f9fafb;
+  border: 1px solid #555;
 }
 
 .privacy-options {
@@ -42,6 +64,12 @@
   background-color: #f9f9f9;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.dark .privacy-btn {
+  background-color: #4b5563;
+  border-color: #6b7280;
+  color: #f3f4f6;
 }
 
 .privacy-btn.active {
@@ -70,6 +98,11 @@
   border-radius: 4px;
 }
 
+.dark .tag-list li {
+  background-color: #6b7280;
+  color: #f9fafb;
+}
+
 .form-buttons {
   display: flex;
   justify-content: flex-end;
@@ -83,6 +116,11 @@
   border-radius: 4px;
 }
 
+.dark .cancel-btn {
+  background-color: #4b5563;
+  color: #f9fafb;
+}
+
 .submit-btn {
   background-color: #e02424;
   color: white;
@@ -94,3 +132,8 @@
   color: red;
   margin-bottom: 1rem;
 }
+
+.dark .error-message {
+  color: #f87171;
+}
+
