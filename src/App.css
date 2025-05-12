@@ -7,12 +7,20 @@
   background-color: #f3f4f6; /* gris claro */
 }
 
+.dark .min-h-screen {
+  background-color: #1f2937; /* gris oscuro */
+}
+
 .bg-gray-100 {
   background-color: #f3f4f6;
 }
 
+.dark .bg-gray-100 {
+  background-color: #1f2937;
+}
+
 .max-w-7xl {
-  max-width: 80rem; /* Tamaño máximo del contenedor */
+  max-width: 80rem;
 }
 
 .mx-auto {
@@ -31,7 +39,7 @@
 }
 
 .text-3xl {
-  font-size: 1.875rem; /* Tamaño de texto 3xl */
+  font-size: 1.875rem;
 }
 
 .font-semibold {
@@ -46,10 +54,11 @@
   color: #4b5563;
 }
 
+.dark .text-gray-600 {
+  color: #d1d5db; /* texto claro en modo oscuro */
+}
+
 .mb-6 {
   margin-bottom: 1.5rem;
 }
 
-.text-gray-600 {
-  color: #4b5563;
-}
