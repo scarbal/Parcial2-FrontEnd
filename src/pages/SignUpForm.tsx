@@ -75,29 +75,55 @@ const SignUpForm: React.FC = () => {
         {error && <p className="error-message">{error}</p>}
         <form className="signup-form" onSubmit={handleSignup}>
           <div className="input-group">
-            <label>First name</label>
-            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            <label className="input-label">First name</label>
+            <input
+              type="text"
+              className="input-field"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
           </div>
           <div className="input-group">
-            <label>Last name</label>
-            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            <label className="input-label">Last name</label>
+            <input
+              type="text"
+              className="input-field"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
           </div>
           <div className="input-group">
-            <label>Username</label>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <label className="input-label">Username</label>
+            <input
+              type="text"
+              className="input-field"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
           <div className="input-group">
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label className="input-label">Email</label>
+            <input
+              type="email"
+              className="input-field"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div className="input-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label className="input-label">Password</label>
+            <input
+              type="password"
+              className="input-field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <button type="submit" className="signup-button">Sign up</button>
         </form>
       </div>
     </div>
+
   );
 };
 
