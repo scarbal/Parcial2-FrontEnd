@@ -30,7 +30,9 @@ export const Header: React.FC = () => {
         ) : (
           // Si el usuario está logueado, mostramos el botón de "New Project"
           <>
-            <button className="button-secondary">New Project</button>
+          <Link to= "/create-project">
+          <button className="button-secondary">New Project</button>
+          </Link>
             <button className="button-tertiary" onClick={logout}>Log Out</button>
             <button className="button-tertiary">Explore</button>
             <div className="avatar"></div>

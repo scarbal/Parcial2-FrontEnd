@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { ProjectTable } from './components/ProjectTable';
-import SignUpForm from './pages/SignUpForm'; 
-import './App.css';  // Importamos el archivo de estilos CSS
-import { AuthProvider } from './context/AuthContext';
+import SignUpForm from './pages/SignUpForm';
 import LoginForm from './pages/LoginForm';
+import CreateProject from './pages/CreateProject'; 
+import PrivateRoute from './components/ProtectedRoutes'; 
+import './App.css';
+import { AuthProvider } from './context/AuthContext';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider> 
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-100">
           <Header />
@@ -27,7 +29,17 @@ const App: React.FC = () => {
                 }
               />
               <Route path="/signup" element={<SignUpForm />} />
-              <Route path='/login' element={<LoginForm/>} />
+              <Route path="/login" element={<LoginForm />} />
+
+              {/* ✅ Ruta protegida */}
+              <Route
+                path="/create-project"
+                element={
+                  <PrivateRoute>
+                    <CreateProject />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </main>
         </div>
@@ -37,4 +49,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
