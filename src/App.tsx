@@ -5,8 +5,20 @@ import SignUpForm from './pages/SignUpForm';
 import './App.css';  // Importamos el archivo de estilos CSS
 import { AuthProvider } from './context/AuthContext';
 import LoginForm from './pages/LoginForm';
+import AboutUs from './pages/AboutUs';
+import { useTheme } from './context/ThemeContext';
+import React, { useEffect } from 'react';
 
 const App: React.FC = () => {
+  const { isDarkMode } = useTheme();
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
   return (
     <AuthProvider> 
       <Router>
@@ -28,6 +40,7 @@ const App: React.FC = () => {
               />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path='/login' element={<LoginForm/>} />
+              <Route path="/AboutUs" element={<AboutUs />} />
             </Routes>
           </main>
         </div>

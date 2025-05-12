@@ -1,7 +1,7 @@
 /* Header.css */
 
+/* Estilos comunes */
 .header {
-  background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   display: flex;
@@ -21,17 +21,11 @@
 }
 
 .header .search-input {
-  background-color: #f3f4f6;
   padding: 0.25rem 0.75rem;
   border-radius: 0.375rem;
 }
 
-.header .right-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
+/* Botones */
 .header .button-primary {
   background-color: #3b82f6;
   color: white;
@@ -47,7 +41,6 @@
 }
 
 .header .button-tertiary {
-  background-color: #e5e7eb;
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
 }
@@ -55,10 +48,48 @@
 .header .avatar {
   width: 2rem;
   height: 2rem;
-  background-color: #d1d5db;
   border-radius: 50%;
 }
 
 .header .avatar:last-child {
   margin-left: 0.5rem;
 }
+
+/* Modo claro */
+.light .header {
+  background-color: white;
+}
+
+.light .header .search-input {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.light .header .button-tertiary {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.light .header .avatar {
+  background-color: #d1d5db;
+}
+
+/* Modo oscuro */
+.dark .header {
+  background-color: #1f2937;
+}
+
+.dark .header .search-input {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+.dark .header .button-tertiary {
+  background-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark .header .avatar {
+  background-color: #6b7280;
+}
+
