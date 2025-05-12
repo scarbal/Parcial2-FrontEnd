@@ -7,6 +7,21 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* index.css */
+
+/* Estilos por defecto: modo claro */
+body {
+  background-color: #fff;
+  color: #000;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Modo oscuro */
+body.dark {
+  background-color: #121212;
+  color: #fff;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -14,3 +29,5 @@ code {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+

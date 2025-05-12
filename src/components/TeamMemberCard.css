@@ -1,0 +1,75 @@
+/* team-card.css */
+
+/* Estilos comunes */
+.team-card {
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+}
+
+.team-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.team-card h3 {
+  font-size: 1.3rem;
+  margin: 0.5rem 0;
+}
+
+.team-card .role {
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.team-card p {
+  font-size: 0.95rem;
+}
+
+/* Modo claro */
+.light .team-card {
+  background-color: white;
+  color: #2d2d2d;
+}
+
+.light .team-card h3 {
+  color: #222;
+}
+
+.light .team-card .role {
+  color: #666;
+}
+
+.light .team-card p {
+  color: #555;
+}
+
+/* Modo oscuro */
+.dark .team-card {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .team-card h3 {
+  color: #e5e7eb;
+}
+
+.dark .team-card .role {
+  color: #9ca3af;
+}
+
+.dark .team-card p {
+  color: #d1d5db;
+}
+
+
+

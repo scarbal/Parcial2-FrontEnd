@@ -1,22 +1,21 @@
 /* ProjectTable.css */
 
-/* Estilo para la tabla de proyectos */
+/* Estilos comunes */
 .project-table {
-  background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .project-table .header {
   padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid;
 }
 
 .project-table .search-input {
   width: 100%;
   padding: 0.5rem;
   border-radius: 0.375rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid;
 }
 
 .project-table .filters {
@@ -29,7 +28,6 @@
 .project-table .filters button {
   background-color: transparent;
   border: none;
-  color: #3b82f6;
   font-weight: 500;
 }
 
@@ -46,15 +44,64 @@
 .project-table th,
 .project-table td {
   padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid;
 }
 
-.project-table th {
-  font-weight: 600;
+/* Modo claro */
+.light .project-table {
+  background-color: white;
+}
+
+.light .project-table .header,
+.light .project-table th,
+.light .project-table td {
+  border-color: #e5e7eb;
+}
+
+.light .project-table .search-input {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.light .project-table th {
   color: #4b5563;
 }
 
-.project-table td {
-  font-size: 0.875rem;
+.light .project-table td {
   color: #4b5563;
 }
+
+.light .project-table .filters button {
+  color: #3b82f6;
+}
+
+/* Modo oscuro */
+.dark .project-table {
+  background-color: #1f2937;
+}
+
+.dark .project-table .header,
+.dark .project-table th,
+.dark .project-table td {
+  border-color: #374151;
+}
+
+.dark .project-table .search-input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark .project-table th {
+  color: #d1d5db;
+}
+
+.dark .project-table td {
+  color: #d1d5db;
+}
+
+.dark .project-table .filters button {
+  color: #60a5fa;
+}
+

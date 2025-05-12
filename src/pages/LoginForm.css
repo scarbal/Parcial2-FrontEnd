@@ -1,105 +1,214 @@
-/* Estilos para el contenedor principal */
+/* login.css */
+
+/* Contenedor principal */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-/* Estilos para el formulario */
+/* Formulario */
 .login-form-container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Títulos */
 .login-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
 }
 
+/* Inputs */
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 .input-label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 5px;
+  margin-bottom: 0.25rem;
   display: block;
 }
 
 .input-field {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: 1px solid;
+  outline: none;
+  transition: border-color 0.3s, background-color 0.3s;
 }
 
-.forgot-password {
-  text-align: right;
-  font-size: 12px;
-  color: #007bff;
-  cursor: pointer;
-}
-
-.login-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.google-login-container {
-  margin-top: 20px;
-}
-
+/* Botones */
+.login-button,
 .google-login-button {
   width: 100%;
-  padding: 12px;
-  background-color: #db4437;
-  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
-}
-.SignUp-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #007bff;
-  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.error-message {
-  color: #ff4d4f;
-  background-color: #fff1f0;
-  border: 1px solid #ffa39e;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.login-button:hover,
+.google-login-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Enlaces */
+.forgot-password,
+.SignUp-link {
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: right;
+  transition: color 0.3s;
+}
+
+.SignUp-link {
+  text-align: center;
+  margin-top: 1.25rem;
 }
 
 .terms-text {
-  margin-top: 20px;
-  font-size: 12px;
-  color: #777;
+  margin-top: 1.25rem;
+  font-size: 0.75rem;
   text-align: center;
+}
+
+/* Errores */
+.error-message {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Google login */
+.google-login-container {
+  margin-top: 1.25rem;
+}
+
+/* Modo claro */
+.light .login-container {
+  background-color: #f9f9f9;
+}
+
+.light .login-form-container {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+.light .input-field {
+  background-color: #ffffff;
+  color: #1f2937;
+  border-color: #d1d5db;
+}
+
+.light .input-field:focus {
+  border-color: #3b82f6;
+}
+
+.light .forgot-password,
+.light .SignUp-link {
+  color: #2563eb;
+}
+
+.light .login-button {
+  background-color: #2563eb !important; 
+  color: white !important;
+}
+
+.light .login-button:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.light .google-login-button {
+  background-color: #db4437 !important; 
+  color: white !important;
+}
+
+.light .google-login-button:hover {
+  background-color: #c1351d !important;
+}
+
+.light .error-message {
+  background-color: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #b91c1c;
+}
+
+.light .terms-text {
+  color: #6b7280;
+}
+
+/* Modo oscuro */
+.dark .login-container {
+  background-color: #111827;
+}
+
+.dark .login-form-container {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .input-field {
+  background-color: #374151;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.dark .input-field:focus {
+  border-color: #3b82f6;
+}
+
+.dark .forgot-password,
+.dark .SignUp-link {
+  color: #60a5fa;
+}
+
+.dark .login-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.dark .login-button:hover {
+  background-color: #2563eb;
+}
+
+.dark .google-login-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.dark .google-login-button:hover {
+  background-color: #dc2626;
+}
+
+.dark .error-message {
+  background-color: #7f1d1d;
+  border: 1px solid #b91c1c;
+  color: #fca5a5;
+}
+
+.dark .terms-text {
+  color: #9ca3af;
 }

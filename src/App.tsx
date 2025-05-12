@@ -2,13 +2,26 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { ProjectTable } from './components/ProjectTable';
 import SignUpForm from './pages/SignUpForm';
-import LoginForm from './pages/LoginForm';
-import CreateProject from './pages/CreateProject'; 
-import PrivateRoute from './components/ProtectedRoutes'; 
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
+import LoginForm from './pages/LoginForm';
+import CreateProject from './pages/CreateProject'; // Mantén la importación de CreateProject
+import PrivateRoute from './components/ProtectedRoutes'; 
+import AboutUs from './pages/AboutUs'; // Mantén la importación de AboutUs
+import { useTheme } from './context/ThemeContext';
+import React, { useEffect } from 'react';
 
 const App: React.FC = () => {
+  const { isDarkMode } = useTheme();
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   return (
     <AuthProvider>
       <Router>
@@ -30,8 +43,8 @@ const App: React.FC = () => {
               />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
-
-              {/* ✅ Ruta protegida */}
+              
+              {/* Ruta protegida */}
               <Route
                 path="/create-project"
                 element={
@@ -40,6 +53,8 @@ const App: React.FC = () => {
                   </PrivateRoute>
                 }
               />
+              
+              <Route path="/AboutUs" element={<AboutUs />} />
             </Routes>
           </main>
         </div>
