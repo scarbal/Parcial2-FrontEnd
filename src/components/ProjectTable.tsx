@@ -5,6 +5,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 interface Project {
+  id: string;
   type: string;
   description: string;
   tags: string[];
@@ -12,6 +13,8 @@ interface Project {
   stars: number;
   forks: number;
   updated: string;
+  likes: number;
+  favorites: number;
 }
 
 export const ProjectTable: React.FC = () => {
@@ -20,7 +23,11 @@ export const ProjectTable: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       const querySnapshot = await getDocs(collection(db, 'projects'));
-      const data: Project[] = querySnapshot.docs.map(doc => doc.data() as Project);
+      const data: Project[] = querySnapshot.docs.map(doc => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Project[];
+
       setProjects(data);
     };
 

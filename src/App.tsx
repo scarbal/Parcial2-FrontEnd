@@ -10,6 +10,7 @@ import PrivateRoute from './components/ProtectedRoutes';
 import AboutUs from './pages/AboutUs'; // Mantén la importación de AboutUs
 import { useTheme } from './context/ThemeContext';
 import React, { useEffect } from 'react';
+import { ProjectDetail } from './pages/ProjectDetail';
 
 const App: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -43,6 +44,8 @@ const App: React.FC = () => {
               />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
+              <Route path="/project/:id" element={<ProjectDetail />} />
+
               
               {/* Ruta protegida */}
               <Route

@@ -3,7 +3,7 @@ import {
   createUserWithEmailAndPassword
 } from 'firebase/auth';
 import {
-  collection, addDoc, query, where, getDocs
+  collection, addDoc, doc, setDoc, query, where, getDocs
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
@@ -49,7 +49,7 @@ const SignUpForm: React.FC = () => {
       const user = userCredential.user;
 
       // Guardar datos en Firestore
-      await addDoc(collection(db, 'users'), {
+      await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         firstName,
         lastName,

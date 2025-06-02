@@ -8,9 +8,16 @@ interface ProjectProps {
   stars: number;
   forks: number;
   updated: string;
+  likes: number;
+  favorites: number;
+  id: string;
 }
 
+
+import { useNavigate } from 'react-router-dom';
+
 export const ProjectRow: React.FC<ProjectProps> = ({
+  id,
   type,
   description,
   tags,
@@ -18,9 +25,16 @@ export const ProjectRow: React.FC<ProjectProps> = ({
   stars,
   forks,
   updated,
+  likes,
+  favorites,
 }) => {
+  const navigate = useNavigate();
+
   return (
-    <tr className="border-b text-sm hover:bg-gray-50">
+    <tr
+      className="border-b text-sm hover:bg-gray-50 cursor-pointer"
+      onClick={() => navigate(`/project/${id}`)}
+    >
       <td className="p-4 font-medium">{type}</td>
       <td>{description}</td>
       <td>
@@ -48,6 +62,8 @@ export const ProjectRow: React.FC<ProjectProps> = ({
       <td>{stars}</td>
       <td>{forks}</td>
       <td>{updated}</td>
+      <td>❤️ {likes}</td>
+      <td>⭐ {favorites}</td>
     </tr>
   );
 };
