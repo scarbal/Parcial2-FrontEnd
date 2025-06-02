@@ -11,6 +11,7 @@ import AboutUs from './pages/AboutUs'; // Mantén la importación de AboutUs
 import { useTheme } from './context/ThemeContext';
 import React, { useEffect } from 'react';
 import { ProjectDetail } from './pages/ProjectDetail';
+import { Profile } from './pages/Profile';
 
 const App: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -53,6 +54,14 @@ const App: React.FC = () => {
                 element={
                   <PrivateRoute>
                     <CreateProject />
+                  </PrivateRoute>
+                }
+              />
+                            <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <Profile />
                   </PrivateRoute>
                 }
               />

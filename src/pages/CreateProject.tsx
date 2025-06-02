@@ -33,35 +33,36 @@ const CreateProject: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!type || !description) {
-      setError('Please fill in all required fields.');
-      return;
-    }
+  if (!type || !description) {
+    setError('Please fill in all required fields.');
+    return;
+  }
 
-    try {
-      await addDoc(collection(db, 'projects'), {
-        type,
-        description,
-        tags,
-        members,
-        stars: 0,
-        forks: 0,
-        updated: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-        privacy,
-        createdBy: user?.uid || '',
-      });
+  try {
+    await addDoc(collection(db, 'projects'), {
+      type,
+      description,
+      tags,
+      members,
+      stars: 0,
+      forks: 0,
+      updated: new Date().toISOString().split('T')[0], 
+      privacy,
+      createdBy: user?.uid || '',
+      ownerId: user?.uid || '', 
+      createdAt: serverTimestamp(), 
+    });
 
-      console.log('Proyecto creado');
-      navigate('/');
-    } catch (err: any) {
-      console.error('Error al crear el proyecto:', err);
-      setError('Failed to create project. Try again.');
-    }
-  };
-
+    console.log('Proyecto creado');
+    navigate('/');
+  } catch (err: any) {
+    console.error('Error al crear el proyecto:', err);
+    setError('Failed to create project. Try again.');
+  }
+};
   return (
     <div className="create-project-container">
       <h1 className="title">Create a project</h1>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, increment, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -26,6 +26,9 @@ interface Project {
   likes: number;
   favorites: number;
   comments?: string[];
+  likedBy?: string[];
+  favoritedBy?: string[];
+
 }
 
 export const ProjectDetail: React.FC = () => {
@@ -38,9 +41,15 @@ useEffect(() => {
   const fetchProject = async () => {
     const docRef = doc(db, 'projects', id!);
     const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      setProject({ id: docSnap.id, ...docSnap.data() } as Project);
-    }
+   if (docSnap.exists()) {
+  const data = docSnap.data();
+  setProject({
+    id: docSnap.id,
+    likedBy: data.likedBy || [],
+    favoritedBy: data.favoritedBy || [],
+    ...data
+  } as Project);
+}
   };
 
   fetchProject();
@@ -90,21 +99,85 @@ const fetchComments = async () => {
   setComments(data);
 };
 
-  const handleLike = async () => {
-    const docRef = doc(db, 'projects', id!);
+const handleLike = async () => {
+  if (!user || !project) return;
+
+  const docRef = doc(db, 'projects', id!);
+  const alreadyLiked = project.likedBy?.includes(user.uid);
+
+  if (alreadyLiked) {
+    // Quitar like
+    await updateDoc(docRef, {
+      likes: increment(-1),
+      likedBy: arrayRemove(user.uid),
+    });
+    setProject(prev =>
+      prev
+        ? {
+            ...prev,
+            likes: prev.likes - 1,
+            likedBy: prev.likedBy?.filter(uid => uid !== user.uid) || [],
+          }
+        : prev
+    );
+  } else {
+    // Agregar like
     await updateDoc(docRef, {
       likes: increment(1),
+      likedBy: arrayUnion(user.uid),
     });
-    setProject(prev => prev ? { ...prev, likes: prev.likes + 1 } : prev);
-  };
+    setProject(prev =>
+      prev
+        ? {
+            ...prev,
+            likes: prev.likes + 1,
+            likedBy: [...(prev.likedBy || []), user.uid],
+          }
+        : prev
+    );
+  }
+};
+
 
   const handleFavorite = async () => {
-    const docRef = doc(db, 'projects', id!);
+  if (!user || !project) return;
+
+  const docRef = doc(db, 'projects', id!);
+  const alreadyFavorited = project.favoritedBy?.includes(user.uid);
+
+  if (alreadyFavorited) {
+    // Quitar favorito
+    await updateDoc(docRef, {
+      favorites: increment(-1),
+      favoritedBy: arrayRemove(user.uid),
+    });
+    setProject(prev =>
+      prev
+        ? {
+            ...prev,
+            favorites: prev.favorites - 1,
+            favoritedBy: prev.favoritedBy?.filter(uid => uid !== user.uid) || [],
+          }
+        : prev
+    );
+  } else {
+    // Agregar favorito
     await updateDoc(docRef, {
       favorites: increment(1),
+      favoritedBy: arrayUnion(user.uid),
     });
-    setProject(prev => prev ? { ...prev, favorites: prev.favorites + 1 } : prev);
-  };
+    setProject(prev =>
+      prev
+        ? {
+            ...prev,
+            favorites: prev.favorites + 1,
+            favoritedBy: [...(prev.favoritedBy || []), user.uid],
+          }
+        : prev
+    );
+  }
+};
+
 
   if (!project) return <div>Loading...</div>;
 
@@ -116,15 +189,21 @@ const fetchComments = async () => {
         <strong>Tags:</strong> {project.tags.join(', ')}
       </div>
       <div className="mt-4">
-        <button onClick={handleLike}>❤️ Like ({project.likes})</button>
-        <button onClick={handleFavorite} className="ml-4">⭐ Favorite ({project.favorites})</button>
+        <button onClick={handleLike}>
+  {project.likedBy?.includes(user?.uid || '') ? '👎 Unlike' : '👍 Like'} ({project.likes})
+</button>
+
+        <button onClick={handleFavorite} className="ml-4">
+  {project.favoritedBy?.includes(user?.uid || '') ? '❤️ Unfavorite' : '🤍 Favorite'} ({project.favorites})
+</button>
+
       </div>
         <div className="mt-6">
   <h2 className="font-bold text-lg mb-2">Comments</h2>
   {comments.map((c, idx) => (
     <div key={idx} className="flex gap-3 items-start border-b py-3">
       <img
-        src={c.userPhoto || '/default-avatar.png'}
+        src={c.userPhoto || 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png'}
         alt={c.userName}
         className="w-8 h-8 rounded-full object-cover"
       />

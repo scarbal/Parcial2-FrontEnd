@@ -44,7 +44,6 @@ export const ProjectTable: React.FC = () => {
           <button>Trending</button>
           <button>Popular</button>
           <button>Recently updated</button>
-          <button>Add filter</button>
         </div>
       </div>
       <table className="table">
@@ -54,8 +53,9 @@ export const ProjectTable: React.FC = () => {
             <th>Description</th>
             <th>Tags</th>
             <th>Members</th>
-            <th>Stars</th>
             <th>Forks</th>
+            <th>Likes</th>
+            <th>Favorites</th>
             <th>Last updated</th>
           </tr>
         </thead>
