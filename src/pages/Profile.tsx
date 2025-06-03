@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, updateDoc, arrayRemove, arrayUnion, doc, getDoc} from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+
 
 interface Project {
   id: string;
@@ -17,23 +18,48 @@ interface Project {
 }
 
 export const Profile: React.FC = () => {
+
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [userData, setUserData] = useState<any>(null);
   const navigate = useNavigate();
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [followingUsers, setFollowingUsers] = useState<any[]>([]);
+  const [followerUsers, setFollowerUsers] = useState<any[]>([]);
+
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchProjects = async () => {
-      const q = query(collection(db, 'projects'), where('ownerId', '==', user.uid));
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Project[];
-      setProjects(data);
-    };
+  const fetchProjects = async () => {
+    const ownedQuery = query(collection(db, 'projects'), where('ownerId', '==', user.uid));
+    const memberQuery = query(collection(db, 'projects'), where('members', 'array-contains', user.uid));
+
+    const [ownedSnap, memberSnap] = await Promise.all([
+      getDocs(ownedQuery),
+      getDocs(memberQuery)
+    ]);
+
+    const ownedProjects = ownedSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Project[];
+
+    const memberProjects = memberSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Project[];
+
+    
+    const allProjectsMap = new Map<string, Project>();
+    [...ownedProjects, ...memberProjects].forEach(proj => {
+      allProjectsMap.set(proj.id, proj);
+    });
+
+    setProjects(Array.from(allProjectsMap.values()));
+  };
+
 
     const fetchUserData = async () => {
       const docSnap = await getDocs(query(collection(db, 'users'), where('uid', '==', user.uid)));
@@ -45,6 +71,82 @@ export const Profile: React.FC = () => {
     fetchProjects();
     fetchUserData();
   }, [user]);
+
+  
+
+  const fetchUsersByIds = async (uids: string[]) => {
+    const users = await Promise.all(
+      uids.map(async uid => {
+        const snap = await getDoc(doc(db, 'users', uid));
+        return snap.exists() ? { uid, ...snap.data() } : null;
+      })
+    );
+    return users.filter(Boolean); // Elimina los nulls
+  };
+
+  const handleShowFollowing = async () => {
+    const users = await fetchUsersByIds(userData.following || []);
+    setFollowingUsers(users);
+    setShowFollowing(true);
+  };
+
+  const handleShowFollowers = async () => {
+    const users = await fetchUsersByIds(userData.followers || []);
+    setFollowerUsers(users);
+    setShowFollowers(true);
+  };
+
+ 
+
+const handleFollow = async (targetUserId: string) => {
+  if (!user || user.uid === targetUserId) return;
+
+  const currentUserRef = doc(db, 'users', user.uid);
+  const targetUserRef = doc(db, 'users', targetUserId);
+
+  const isFollowing = userData.following?.includes(targetUserId);
+
+  await updateDoc(currentUserRef, {
+    following: isFollowing
+      ? arrayRemove(targetUserId)
+      : arrayUnion(targetUserId),
+  });
+
+  await updateDoc(targetUserRef, {
+    followers: isFollowing
+      ? arrayRemove(user.uid)
+      : arrayUnion(user.uid),
+  });
+
+  // Opcional: actualizar el estado local
+  const updatedFollowing = isFollowing
+    ? userData.following.filter((id: string) => id !== targetUserId)
+    : [...(userData.following || []), targetUserId];
+
+  const updatedFollowers = isFollowing
+    ? userData.followers
+    : userData.followers || [];
+
+  setUserData((prev: any) => ({
+    ...prev,
+    following: updatedFollowing,
+    followers: updatedFollowers,
+  }));
+
+  if (showFollowing) {
+    setFollowingUsers((prev: any[]) =>
+      isFollowing ? prev.filter(u => u.uid !== targetUserId) : prev
+    );
+  }
+
+  if (showFollowers) {
+    setFollowerUsers((prev: any[]) =>
+      isFollowing ? prev : prev.map(u => u.uid === targetUserId ? u : u)
+    );
+  }
+};
+
+
 
   if (!user || !userData) return <div>Loading...</div>;
 
@@ -111,6 +213,82 @@ export const Profile: React.FC = () => {
           <p><strong>Favorites: </strong> {projects.reduce((acc, p) => acc + p.favorites, 0)}</p>
         </div>
 
+              <div className="mt-4 text-sm text-gray-700 space-y-1">
+          <p><strong>Repositorios:</strong> {projects.length}</p>
+          <p><strong>Likes totales:</strong> {projects.reduce((acc, p) => acc + p.likes, 0)}</p>
+          <p><strong>Favorites:</strong> {projects.reduce((acc, p) => acc + p.favorites, 0)}</p>
+          <p>
+            <strong className="mr-1">Following:</strong>
+            <button onClick={handleShowFollowing} className="text-blue-600 hover:underline">
+              {userData.following?.length || 0}
+            </button>
+          </p>
+          <p>
+            <strong className="mr-1">Followers:</strong>
+            <button onClick={handleShowFollowers} className="text-blue-600 hover:underline">
+              {userData.followers?.length || 0}
+            </button>
+          </p>
+        </div>
+      {showFollowing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-h-[80vh] overflow-y-auto w-[400px]">
+            <h3 className="text-lg font-bold mb-4">Following</h3>
+            <ul className="space-y-2">
+            {followingUsers.map(user => (
+              <li key={user.uid} className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <img src={user.photoURL || 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png'} className="w-8 h-8 rounded-full" />
+                  <div>
+                    <p className="font-medium">{user.firstName} {user.lastName}</p>
+                    <p className="text-xs text-gray-600">@{user.username}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleFollow(user.uid)}
+                  className="text-red-600 text-xs underline"
+                >
+                  Unfollow
+                </button>
+              </li>
+            ))}
+            </ul>
+            <button className="mt-4 text-sm text-blue-600 hover:underline" onClick={() => setShowFollowing(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {showFollowers && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-h-[80vh] overflow-y-auto w-[400px]">
+            <h3 className="text-lg font-bold mb-4">Followers</h3>
+            <ul className="space-y-2">
+        {followerUsers.map(user => (
+          <li key={user.uid} className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <img src={user.photoURL || 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png'} className="w-8 h-8 rounded-full" />
+              <div>
+                <p className="font-medium">{user.firstName} {user.lastName}</p>
+                <p className="text-xs text-gray-600">@{user.username}</p>
+              </div>
+            </div>
+            {userData.following?.includes(user.uid) && (
+              <button
+                onClick={() => handleFollow(user.uid)}
+                className="text-red-600 text-xs underline"
+              >
+                Unfollow
+              </button>
+            )}
+          </li>
+        ))}
+            </ul>
+            <button className="mt-4 text-sm text-blue-600 hover:underline" onClick={() => setShowFollowers(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
+
         <button
           onClick={() => navigate('/edit-profile')}
           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
@@ -175,5 +353,7 @@ export const Profile: React.FC = () => {
         </table>
       </div>
     </div>
+
+    
   );
 };

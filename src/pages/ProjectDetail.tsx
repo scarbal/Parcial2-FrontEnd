@@ -7,6 +7,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+
 
 interface Project {
   id: string;
@@ -226,24 +228,40 @@ const projectData: Project = {
     navigate('/profile'); // redirige a la página de perfil
   };
 
-  const handleFollow = async (targetUserId: string) => {
+const handleFollow = async (targetUserId: string) => {
   if (!user || user.uid === targetUserId) return;
 
-  const userRef = doc(db, 'users', user.uid);
+  const userRef = doc(db, 'users', user.uid); // el que da follow
+  const targetUserRef = doc(db, 'users', targetUserId); // el que recibe follow
   const isFollowing = userFollowings.includes(targetUserId);
 
-  await updateDoc(userRef, {
-    following: isFollowing
-      ? arrayRemove(targetUserId)
-      : arrayUnion(targetUserId)
-  });
+  if (isFollowing) {
+    // Unfollow
+    await Promise.all([
+      updateDoc(userRef, {
+        following: arrayRemove(targetUserId)
+      }),
+      updateDoc(targetUserRef, {
+        followers: arrayRemove(user.uid)
+      })
+    ]);
 
-  setUserFollowings(prev =>
-    isFollowing
-      ? prev.filter(uid => uid !== targetUserId)
-      : [...prev, targetUserId]
-  );
+    setUserFollowings(prev => prev.filter(uid => uid !== targetUserId));
+  } else {
+    // Follow
+    await Promise.all([
+      updateDoc(userRef, {
+        following: arrayUnion(targetUserId)
+      }),
+      updateDoc(targetUserRef, {
+        followers: arrayUnion(user.uid)
+      })
+    ]);
+
+    setUserFollowings(prev => [...prev, targetUserId]);
+  }
 };
+
 
 
   const isOwner = user && project?.ownerId === user.uid;
@@ -309,49 +327,52 @@ return (
 <div className="mb-8">
   <h2 className="text-xl font-semibold text-gray-800 mb-4">Author & Members</h2>
 
-  {authorProfile && (
-    <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
-      <div className="flex items-center gap-3">
-        <img
-          src={authorProfile.photoURL}
-          alt={authorProfile.fullName}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <div className="text-gray-800 font-medium">
-          👤 <span className="font-semibold">Author:</span> {authorProfile.fullName}
-        </div>
+ {/* Author */}
+{authorProfile && (
+  <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
+    <Link to={`/profile/${authorProfile.uid}`} className="flex items-center gap-3">
+      <img
+        src={authorProfile.photoURL}
+        alt={authorProfile.fullName}
+        className="w-10 h-10 rounded-full object-cover cursor-pointer"
+      />
+      <div className="text-gray-800 font-medium cursor-pointer">
+        👤 <span className="font-semibold">Author:</span> {authorProfile.fullName}
       </div>
-      {user?.uid !== authorProfile.uid && (
-        <button
-          onClick={() => handleFollow(authorProfile.uid)}
-          className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-        >
-          {userFollowings.includes(authorProfile.uid) ? 'Unfollow' : 'Follow'}
-        </button>
-      )}
-    </div>
-  )}
+    </Link>
+    {user?.uid !== authorProfile.uid && (
+      <button
+        onClick={() => handleFollow(authorProfile.uid)}
+        className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+      >
+        {userFollowings.includes(authorProfile.uid) ? 'Unfollow' : 'Follow'}
+      </button>
+    )}
+  </div>
+)}
 
-  {memberProfiles.map((member) => (
-    <div key={member.uid} className="flex justify-between items-center bg-gray-50 p-3 rounded mt-2">
-      <div className="flex items-center gap-3">
-        <img
-          src={member.photoURL}
-          alt={member.fullName}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <div className="text-gray-700">👥 {member.fullName}</div>
-      </div>
-      {user?.uid !== member.uid && (
-        <button
-          onClick={() => handleFollow(member.uid)}
-          className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-        >
-          {userFollowings.includes(member.uid) ? 'Unfollow' : 'Follow'}
-        </button>
-      )}
-    </div>
-  ))}
+{/* Members */}
+{memberProfiles.map((member) => (
+  <div key={member.uid} className="flex justify-between items-center bg-gray-50 p-3 rounded mt-2">
+    <Link to={`/profile/${member.uid}`} className="flex items-center gap-3">
+      <img
+        src={member.photoURL}
+        alt={member.fullName}
+        className="w-10 h-10 rounded-full object-cover cursor-pointer"
+      />
+      <div className="text-gray-700 cursor-pointer">👥 {member.fullName}</div>
+    </Link>
+    {user?.uid !== member.uid && (
+      <button
+        onClick={() => handleFollow(member.uid)}
+        className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+      >
+        {userFollowings.includes(member.uid) ? 'Unfollow' : 'Follow'}
+      </button>
+    )}
+  </div>
+))}
+
 </div>
 
 

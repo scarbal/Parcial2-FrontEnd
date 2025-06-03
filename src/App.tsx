@@ -5,9 +5,9 @@ import SignUpForm from './pages/SignUpForm';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import LoginForm from './pages/LoginForm';
-import CreateProject from './pages/CreateProject'; // Mantén la importación de CreateProject
+import CreateProject from './pages/CreateProject'; 
 import PrivateRoute from './components/ProtectedRoutes'; 
-import AboutUs from './pages/AboutUs'; // Mantén la importación de AboutUs
+import AboutUs from './pages/AboutUs'; 
 import { useTheme } from './context/ThemeContext';
 import React, { useEffect } from 'react';
 import { ProjectDetail } from './pages/ProjectDetail';
