@@ -45,7 +45,9 @@ export const Header: React.FC = () => {
               <button className="button-primary" id="aboutUs">About Us</button>
             </Link>
              {/* Botón de seed: <button className="button-secondary" onClick={handleSeed}>Seed Database</button> */}
+            <Link to="/">
             <button className="button-tertiary" onClick={logout}>Log Out</button>
+            </Link>
             <Link to="/profile">
               <img
                 src={user?.photoURL || 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png'}

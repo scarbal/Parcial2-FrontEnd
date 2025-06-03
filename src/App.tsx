@@ -12,6 +12,8 @@ import { useTheme } from './context/ThemeContext';
 import React, { useEffect } from 'react';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { Profile } from './pages/Profile';
+import { EditProject } from './pages/EditProject';
+import { EditProfile } from './pages/EditProfile';
 
 const App: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -57,11 +59,27 @@ const App: React.FC = () => {
                   </PrivateRoute>
                 }
               />
-                            <Route
+              <Route
                 path="/profile"
                 element={
                   <PrivateRoute>
                     <Profile />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/edit-project/:id"
+                element={
+                  <PrivateRoute>
+                    <EditProject/>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/edit-profile"
+                element={
+                  <PrivateRoute>
+                    <EditProfile/>
                   </PrivateRoute>
                 }
               />

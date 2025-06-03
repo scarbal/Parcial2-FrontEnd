@@ -12,6 +12,7 @@ const CreateProject: React.FC = () => {
   const [privacy, setPrivacy] = useState<'Public' | 'Private'>('Public');
   const [tags, setTags] = useState<string[]>([]);
   const [members, setMembers] = useState<string[]>([]);
+  const [gitLink, setGitLink] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [memberInput, setMemberInput] = useState('');
   const [error, setError] = useState('');
@@ -47,11 +48,12 @@ const handleSubmit = async (e: React.FormEvent) => {
       description,
       tags,
       members,
-      stars: 0,
+      gitLink,
+      likes: 0,
+      favorites: 0,
       forks: 0,
       updated: new Date().toISOString().split('T')[0], 
       privacy,
-      createdBy: user?.uid || '',
       ownerId: user?.uid || '', 
       createdAt: serverTimestamp(), 
     });
@@ -80,6 +82,13 @@ const handleSubmit = async (e: React.FormEvent) => {
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <label>Link del repositorio</label>
+        <input
+          type="text"
+          value={gitLink}
+          onChange={(e) => setGitLink(e.target.value)}
         />
 
         <label>Privacy</label>

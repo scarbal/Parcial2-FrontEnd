@@ -20,19 +20,23 @@ interface Project {
 export const ProjectTable: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const querySnapshot = await getDocs(collection(db, 'projects'));
-      const data: Project[] = querySnapshot.docs.map(doc => ({
-  id: doc.id,
-  ...doc.data(),
-})) as Project[];
+useEffect(() => {
+  const fetchProjects = async () => {
+    const querySnapshot = await getDocs(collection(db, 'projects'));
+    const data: Project[] = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Project[];
 
-      setProjects(data);
-    };
+    // Ordenar por fecha descendente (más reciente primero)
+    const sorted = data.sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime());
 
-    fetchProjects();
-  }, []);
+    setProjects(sorted);
+  };
+
+  fetchProjects();
+}, []);
+
 
   return (
     <div className="project-table">
