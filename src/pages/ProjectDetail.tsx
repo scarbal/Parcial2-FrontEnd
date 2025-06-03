@@ -15,7 +15,6 @@ interface Project {
   gitLink?: string;
   tags: string[];
   members: string[];
-  stars: number;
   forks: number;
   updated: string;
   likes: number;
@@ -25,8 +24,18 @@ interface Project {
   favoritedBy?: string[];
   ownerId: string;
 }
+interface UserProfile {
+  uid: string;
+  fullName: string;
+  photoURL: string;
+}
+
 
 export const ProjectDetail: React.FC = () => {
+  
+  const [authorProfile, setAuthorProfile] = useState<UserProfile | null>(null);
+  const [memberProfiles, setMemberProfiles] = useState<UserProfile[]>([]);
+  const [userFollowings, setUserFollowings] = useState<string[]>([]);
   const { id } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -36,23 +45,54 @@ export const ProjectDetail: React.FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const docRef = doc(db, 'projects', id!);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setProject({
-          id: docSnap.id,
-          likedBy: data.likedBy || [],
-          favoritedBy: data.favoritedBy || [],
-          ...data
-        } as Project);
-      }
-    };
+  const fetchProject = async () => {
+    const docRef = doc(db, 'projects', id!);
+    const docSnap = await getDoc(docRef);
 
-    fetchProject();
-    fetchComments();
-  }, [id]);
+    if (docSnap.exists()) {
+const data = docSnap.data();
+const projectData: Project = {
+  id: docSnap.id,
+  type: data.type || '',
+  description: data.description || '',
+  gitLink: data.gitLink || '',
+  tags: data.tags || [],
+  members: data.members || [],
+  forks: data.forks || 0,
+  updated: data.updated || '',
+  likes: data.likes || 0,
+  favorites: data.favorites || 0,
+  comments: data.comments || [],
+  likedBy: data.likedBy || [],
+  favoritedBy: data.favoritedBy || [],
+  ownerId: data.ownerId || '',
+};
+
+
+
+      setProject(projectData);
+
+      // Cargar datos del autor
+      getUserProfile(projectData.ownerId).then(setAuthorProfile);
+
+      // Cargar datos de los miembros
+      Promise.all(projectData.members.map(getUserProfile)).then(setMemberProfiles);
+    }
+  };
+
+  const fetchFollowings = async () => {
+    if (!user) return;
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      setUserFollowings(data.following || []);
+    }
+  };
+
+  fetchFollowings();
+  fetchProject();
+  fetchComments();
+}, [id]);
 
   const fetchComments = async () => {
     const q = query(collection(db, 'projects', id!, 'comments'), orderBy('createdAt', 'desc'));
@@ -63,6 +103,24 @@ export const ProjectDetail: React.FC = () => {
     }));
     setComments(data);
   };
+
+  const getUserProfile = async (uid: string): Promise<UserProfile> => {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return {
+        uid,
+        fullName: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+        photoURL: data.photoURL || 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png',
+      };
+    }
+    return {
+      uid,
+      fullName: uid,
+      photoURL: 'https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png',
+    };
+  };
+
 
   const handleComment = async () => {
     if (!comment || !user) return;
@@ -168,6 +226,26 @@ export const ProjectDetail: React.FC = () => {
     navigate('/profile'); // redirige a la página de perfil
   };
 
+  const handleFollow = async (targetUserId: string) => {
+  if (!user || user.uid === targetUserId) return;
+
+  const userRef = doc(db, 'users', user.uid);
+  const isFollowing = userFollowings.includes(targetUserId);
+
+  await updateDoc(userRef, {
+    following: isFollowing
+      ? arrayRemove(targetUserId)
+      : arrayUnion(targetUserId)
+  });
+
+  setUserFollowings(prev =>
+    isFollowing
+      ? prev.filter(uid => uid !== targetUserId)
+      : [...prev, targetUserId]
+  );
+};
+
+
   const isOwner = user && project?.ownerId === user.uid;
   const fromProfile = state?.fromProfile;
 
@@ -227,6 +305,56 @@ return (
         </button>
       </div>
     )}
+    
+<div className="mb-8">
+  <h2 className="text-xl font-semibold text-gray-800 mb-4">Author & Members</h2>
+
+  {authorProfile && (
+    <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
+      <div className="flex items-center gap-3">
+        <img
+          src={authorProfile.photoURL}
+          alt={authorProfile.fullName}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div className="text-gray-800 font-medium">
+          👤 <span className="font-semibold">Author:</span> {authorProfile.fullName}
+        </div>
+      </div>
+      {user?.uid !== authorProfile.uid && (
+        <button
+          onClick={() => handleFollow(authorProfile.uid)}
+          className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        >
+          {userFollowings.includes(authorProfile.uid) ? 'Unfollow' : 'Follow'}
+        </button>
+      )}
+    </div>
+  )}
+
+  {memberProfiles.map((member) => (
+    <div key={member.uid} className="flex justify-between items-center bg-gray-50 p-3 rounded mt-2">
+      <div className="flex items-center gap-3">
+        <img
+          src={member.photoURL}
+          alt={member.fullName}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div className="text-gray-700">👥 {member.fullName}</div>
+      </div>
+      {user?.uid !== member.uid && (
+        <button
+          onClick={() => handleFollow(member.uid)}
+          className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        >
+          {userFollowings.includes(member.uid) ? 'Unfollow' : 'Follow'}
+        </button>
+      )}
+    </div>
+  ))}
+</div>
+
+
 
     <div className="mt-8">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Comments</h2>

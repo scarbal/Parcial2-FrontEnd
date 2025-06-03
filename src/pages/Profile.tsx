@@ -108,6 +108,7 @@ export const Profile: React.FC = () => {
         <div className="mt-4 text-sm text-gray-700">
           <p><strong>Repositorios:</strong> {projects.length}</p>
           <p><strong>Likes totales:</strong> {projects.reduce((acc, p) => acc + p.likes, 0)}</p>
+          <p><strong>Favorites: </strong> {projects.reduce((acc, p) => acc + p.favorites, 0)}</p>
         </div>
 
         <button
